@@ -2,10 +2,26 @@ import { View, StyleSheet } from 'react-native';
 import React from 'react';
 import { Input, Button } from 'react-native-elements';
 import {auth} from '../firebase';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import {useEffect, useState} from 'react';
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  
+  const signIn = () => {
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
+  }
+  
   useEffect(() => {
     const unsubcribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -37,7 +53,7 @@ const LoginScreen = ({navigation}) => {
         onChangeText={text => setPassword(text)}
         secureTextEntry
       />
-      <Button title='Login' buttonStyle={styles.button} />
+      <Button title='Login' onPress={signIn} buttonStyle={styles.button} />
       <Button title='Register' buttonStyle={styles.button} onPress={()=>navigation.navigate('Register')} />
     </View>
   );
