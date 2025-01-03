@@ -1,11 +1,25 @@
 import { View, StyleSheet } from 'react-native';
 import React from 'react';
 import { Input, Button } from 'react-native-elements';
-
+import {auth} from '../firebase';
+import {useEffect, useState} from 'react';
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-
+  useEffect(() => {
+    const unsubcribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/auth.user
+        const uid = user.uid;
+        navigation.replace('Chat');
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
+    return unsubcribe;
+  }, []);
   return (
     <View style={styles.container}>
       <Input 

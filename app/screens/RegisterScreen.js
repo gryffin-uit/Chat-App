@@ -3,27 +3,37 @@ import { View, StyleSheet } from 'react-native'
 import { Input, Button } from 'react-native-elements';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../firebase';
+import { updateProfile } from "firebase/auth";
 
 const RegisterScreen = () => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [imageURl, setImageUrl] = useState('');
-
+    const updateUserProfile = async (newDisplayName, newPhotoURL) => {
+        const user = auth.currentUser;
+      
+        if (user) {
+          try {
+            await updateProfile(user, {
+              displayName: newDisplayName,   // Tên hiển thị mới
+              photoURL: newPhotoURL ? newPhotoURL : "https://i.sstatic.net/l60Hf.png"
+            });
+            console.log('Profile updated successfully!');
+          } catch (error) {
+            console.error('Error updating profile: ', error);
+          }
+        } else {
+          console.log('No user is currently signed in.');
+        }
+      };
+      
     const register = () => {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
 
             const user = userCredential.user;
-            updateProfile(auth.currentUser, {
-                displayName: name, photoURL:imageURl ? imageURl : "https://i.sstatic.net/l60Hf.png"
-              }).then(() => {
-                // Profile updated!
-                // ...
-              }).catch((error) => {
-                // An error occurred
-                // ...
-              });
+            updateUserProfile(name, imageURl);
               
             })
             .catch((error) => {
