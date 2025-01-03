@@ -1,12 +1,37 @@
 import React, { useState } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { Input, Button } from 'react-native-elements';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase';
 
 const RegisterScreen = () => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [imageURl, setImageUrl] = useState('');
+
+    const register = () => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+
+            const user = userCredential.user;
+            updateProfile(auth.currentUser, {
+                displayName: name, photoURL:imageURl ? imageURl : "https://i.sstatic.net/l60Hf.png"
+              }).then(() => {
+                // Profile updated!
+                // ...
+              }).catch((error) => {
+                // An error occurred
+                // ...
+              });
+              
+            })
+            .catch((error) => {
+                const errorMessage = error.message;
+                alert(errorMessage);
+            });
+    };
+    
     return (
         <View style={styles.container}>
             <Input
@@ -39,7 +64,7 @@ const RegisterScreen = () => {
                 onChangeText={text => setImageUrl(text)}
             />
 
-            <Button title="Register" style={styles.button} />
+            <Button title="Register" onPress={register} style={styles.button} />
         </View>
     )
 }
