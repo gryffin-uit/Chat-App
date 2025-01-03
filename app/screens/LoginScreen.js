@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import React from 'react';
 import { Input, Button } from 'react-native-elements';
 
-const LoginScreen = () => {
+const LoginScreen = ({navigation}) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
@@ -24,7 +24,7 @@ const LoginScreen = () => {
         secureTextEntry
       />
       <Button title='Login' buttonStyle={styles.button} />
-      <Button title='Register' buttonStyle={styles.button} />
+      <Button title='Register' buttonStyle={styles.button} onPress={()=>navigation.navigate('Register')} />
     </View>
   );
 };
