@@ -31,7 +31,7 @@ const LoginScreen = ({navigation}) => {
         navigation.replace('Chat');
       } else {
         // User is signed out
-        // ...
+        navigation.cangoBack() && navigation.popToTop();
       }
     });
     return unsubcribe;

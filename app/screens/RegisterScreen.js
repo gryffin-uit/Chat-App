@@ -5,7 +5,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../firebase';
 import { updateProfile } from "firebase/auth";
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -34,12 +34,15 @@ const RegisterScreen = () => {
 
             const user = userCredential.user;
             updateUserProfile(name, imageURl);
-              
+            
+            navigation.popToTop();
+
             })
             .catch((error) => {
                 const errorMessage = error.message;
                 alert(errorMessage);
             });
+
     };
     
     return (
