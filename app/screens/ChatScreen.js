@@ -1,15 +1,19 @@
 import { auth, db } from '../firebase';
 import { collection, onSnapshot, query, orderBy, addDoc } from 'firebase/firestore';
 import React, { useLayoutEffect, useCallback, useState, useEffect} from 'react'
-import { View, Text } from 'react-native'
-import { AntDesign } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Modal, ScrollView } from 'react-native'
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Avatar } from 'react-native-elements';
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat, Send, Actions, Message } from 'react-native-gifted-chat';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import EmojiSelector from 'react-native-emoji-selector';
+
 
 const ChatScreen = ({ navigation }) => {
 
     const [messages, setMessages] = useState([])
+    const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
 
     // useEffect(() => {
     //     setMessages([
@@ -25,6 +29,7 @@ const ChatScreen = ({ navigation }) => {
     //         },
     //     ])
     // }, [])
+
     useLayoutEffect(() => {
         const q = query(collection(db, 'chats'), orderBy('createdAt', 'desc'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -49,7 +54,7 @@ const ChatScreen = ({ navigation }) => {
             _id,
             text,
             createdAt,
-            user
+            user,
         } = messages[0];
 
         try {
@@ -57,7 +62,7 @@ const ChatScreen = ({ navigation }) => {
                 _id,
                 text,
                 createdAt,
-                user
+                user,
             });
             console.log('Message added successfully!');
         } catch (error) {
@@ -65,18 +70,63 @@ const ChatScreen = ({ navigation }) => {
         }
     }, []);
 
+    //ChọnChọn Emoji
+    const handleEmojiSelect = (emoji) => {
+        setIsEmojiPickerVisible(false);
+        const newMessage = {
+            _id: Math.random().toString(36).substring(7),
+            text: emoji,
+            createdAt: new Date(),
+            user: {
+                _id: auth?.currentUser?.email,
+                name: auth?.currentUser?.displayName,
+                avatar: auth?.currentUser?.photoURL
+            }
+        };
+        onSend([newMessage]);
+    };
+
+    // Nút chọn Icon
+    const renderActions = (props) => (
+        <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => {
+                console.log('Open emoji picker!!!!');
+                //setIsEmojiPickerVisible(true);
+            }}
+        >
+            <Ionicons name="happy-outline" size={28} color="#007bff" />
+        </TouchableOpacity>
+    );
+
+    const renderSend = (props) => (
+        <Send {...props}>
+            <View>
+                <AntDesign name="arrowright" size={17} color="#fff" />
+            </View>
+        </Send>
+    );
 
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
-                <View style={{ marginLeft: 20 }}>
+                <ScrollView contentContainerStyle={{ marginLeft: 20, flexDirection: 'row', alignItems: 'center' }}>
                     <Avatar
                         rounded
                         source={{
                             uri: auth?.currentUser?.photoURL
                         }}
                     />
-                </View>
+                    <Text style={{
+                        marginLeft: 10,            // Khoảng cách giữa displayName và Avatar
+                        fontSize: 18,               // Cỡ chữ cho tên người dùng
+                        fontWeight: 'bold',         // Đậm tên người dùng
+                        color: '#333',              // Màu chữ, có thể thay đổi theo màu giao diện
+                        letterSpacing: 0.5,         // Khoảng cách giữa các chữ
+                    }}>
+                        {auth?.currentUser?.displayName}
+                    </Text>
+                </ScrollView>
             ),
             headerRight: () => (
                 <TouchableOpacity style={{
@@ -88,7 +138,6 @@ const ChatScreen = ({ navigation }) => {
                 </TouchableOpacity>
             )
         })
-
     }, [])
 
     const signOut = () => {
@@ -99,18 +148,56 @@ const ChatScreen = ({ navigation }) => {
             // An error happened.
         });
     }
+
     return (
-        <GiftedChat
-            messages={messages}
-            showAvatarForEveryMessage={true}
-            onSend={messages => onSend(messages)}
-            user={{
-                _id: auth?.currentUser?.email,
-                name: auth?.currentUser?.displayName,
-                avatar: auth?.currentUser?.photoURL
-            }}
-        />
+            <GiftedChat
+                scrollToBottom={true}
+                scrollToBottomComponent={() => (
+                    <AntDesign name="downcircleo" size={24} color="#007bff" />
+                )}
+                inverted={true}
+                messages={messages}
+                onSend={messages => onSend(messages)}
+                user={{
+                    _id: auth?.currentUser?.email,
+                    name: auth?.currentUser?.displayName,
+                    avatar: auth?.currentUser?.photoURL
+                }}
+                renderActions={renderActions}
+                renderSend={renderSend}
+                showAvatarForEveryMessage={true}
+                renderUsernameOnMessage={true}
+                alwaysShowSend
+            />
+            // <Modal
+            //     visible={isEmojiPickerVisible}
+            //     animationType="slide"
+            //     onRequestClose={() => setIsEmojiPickerVisible(false)}
+            // >
+            //     <EmojiSelector
+            //         onEmojiSelected={handleEmojiSelect}
+            //         showSearchBar={true}
+            //         showTabs={true}
+            //         showHistory={true}
+            //         showSectionTitles={true}
+            //         category="all"
+            //         columns={8}
+            //     />
+            // </Modal>
     )
 }
 
 export default ChatScreen
+const styles = StyleSheet.create({
+    iconButton: {
+        marginLeft: 10,
+        marginBottom: 10,
+    },
+    sendButton: {
+        marginRight: 10,
+        marginBottom: 5,
+        backgroundColor: '#007bff',
+        borderRadius: 20,
+        padding: 8,
+    },
+});

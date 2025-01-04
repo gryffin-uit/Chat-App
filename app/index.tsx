@@ -11,9 +11,23 @@ const Index: React.FC = () => {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Chat" component={ChatScreen}/>
+        <Stack.Screen 
+          name="Chat" 
+          component={ChatScreen}
+          options={{
+            title: 'Chat',  // Thay đổi tiêu đề
+            headerStyle: {
+              backgroundColor: '#f4511e',  // Màu nền của header
+            },
+            headerTintColor: '#fff',  // Màu chữ của tiêu đề
+            headerTitleStyle: {
+              fontWeight: 'bold',  // Kiểu chữ đậm
+              fontSize: 24,        // Cỡ chữ
+            },
+            headerTitleAlign: 'center',  // Đưa tiêu đề vào giữa
+          }}
+        />
       </Stack.Navigator>
-    
   );
 };
 
