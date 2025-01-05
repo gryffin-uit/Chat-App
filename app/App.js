@@ -1,10 +1,19 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { View, ActivityIndicator } from 'react-native'
 import { MenuProvider } from "react-native-popup-menu";
 import { Ionicons } from '@expo/vector-icons';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './config/firebase';
+
+
 import Chats from './screens/Chats';
 import Settings from "./screens/Settings";
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+
 import { AuthenticatedUserProvider, AuthenticatedUserContext } from "./contexts/AuthenticatedUserContext";
 import { UnreadMessagesProvider, UnreadMessagesContext } from "./contexts/UnreadMessagesContext";
 
@@ -36,13 +45,47 @@ const TabNavigator = () => {
   );
 };
 
+const AuthStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name='Login' component={LoginScreen} />
+    <Stack.Screen name='Register' component={RegisterScreen} />
+  </Stack.Navigator>
+);
+
+const RootNavigator = () => {
+  const { user, setUser } = useContext(AuthenticatedUserContext);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async authenticatedUser => {
+      setUser(authenticatedUser || null);
+      setIsLoading(false);
+    });
+
+    return unsubscribeAuth;
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size='large' />
+      </View>
+    );
+  }
+
+  return (
+    <NavigationContainer>
+      {user ? <AuthStack /> : <AuthStack />}
+    </NavigationContainer>
+  );
+};
 
 const App = () => {
   return (
     <MenuProvider>
       <AuthenticatedUserProvider>
         <UnreadMessagesProvider>
-          <h1>PlaceHolder</h1>
+          <RootNavigator />
         </UnreadMessagesProvider>
       </AuthenticatedUserProvider>
     </MenuProvider>
