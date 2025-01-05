@@ -1,82 +1,112 @@
-import { View, StyleSheet } from 'react-native';
-import React from 'react';
-import { Input, Button } from 'react-native-elements';
-import {auth} from '../firebase';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import {useEffect, useState} from 'react';
-const LoginScreen = ({navigation}) => {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  
-  const signIn = () => {
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in 
-      const user = userCredential.user;
-      // ...
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    });
-  }
-  
-  useEffect(() => {
-    const unsubcribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/auth.user
-        const uid = user.uid;
-        navigation.replace('Chat');
-      } else {
-        // User is signed out
-        navigation.canGoBack() && navigation.popToTop();
-      }
-    });
-    return unsubcribe;
-  }, []);
-  return (
-    <View style={styles.container}>
-      <Input 
-        placeholder='Enter your Email'
-        label='Email'
-        leftIcon={{ type: 'material', name: 'email' }}
-        value={email}
-        onChangeText={text => setEmail(text)}
-      />
-      <Input 
-        placeholder='Enter your Password'
-        label='Password'
-        leftIcon={{ type: 'material', name: 'lock' }}
-        value={password}
-        onChangeText={text => setPassword(text)}
-        secureTextEntry
-      />
-      <Button title='Login' onPress={signIn} buttonStyle={styles.button} />
-      <Button title='Register' buttonStyle={styles.button} onPress={()=>navigation.navigate('Register')} />
-    </View>
-  );
-};
+import React, { useState } from "react";
+import { StyleSheet, Text, View, TextInput, Image, SafeAreaView, TouchableOpacity, StatusBar, Alert } from "react-native";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../config/firebase";
+import { colors } from "../config/constants";
+const backImage = require("../../assets/images/background.png");
 
+export default function LoginScreen({ navigation }) {
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const onHandleLogin = () => {
+        if (email !== "" && password !== "") {
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => console.log("Login success"))
+                .catch((err) => Alert.alert("Login error", err.message));
+        }
+    };
+
+    return (
+        <View style={styles.container}>
+            <Image source={backImage} style={styles.backImage} />
+            <View style={styles.whiteSheet} />
+            <SafeAreaView style={styles.form}>
+                <Text style={styles.title}>Log In</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Enter email"
+                    placeholderTextColor="#888"
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    textContentType="emailAddress"
+                    autoFocus={true}
+                    value={email}
+                    onChangeText={(text) => setEmail(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Enter password"
+                    placeholderTextColor="#888"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    secureTextEntry={true}
+                    textContentType="password"
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
+                />
+                <TouchableOpacity style={styles.button} onPress={onHandleLogin}>
+                    <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 18 }}> Log In</Text>
+                </TouchableOpacity>
+                <View style={{ marginTop: 30, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
+                    <Text style={{ color: 'gray', fontWeight: '600', fontSize: 14 }}>Don't have an account? </Text>
+                    <TouchableOpacity onPress={() => { navigation.navigate("Register") }}>
+                        <Text style={{ color: colors.pink, fontWeight: '600', fontSize: 14 }}> Sign Up</Text>
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
+            <StatusBar barStyle="light-content" />
+        </View>
+    );
+}
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-    backgroundColor: '#f8f9fa',
-  },
-  button: {
-    marginTop: 10,
-    backgroundColor: '#007bff',
-    borderRadius: 5,
-    paddingVertical: 10,
-    width: '80%',
-    alignSelf: 'center',
-  },
-  input: {
-    marginBottom: 10,
-  },
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
+    title: {
+        fontSize: 36,
+        fontWeight: 'bold',
+        color: 'black',
+        alignSelf: "center",
+        paddingBottom: 24,
+    },
+    input: {
+        backgroundColor: "#F6F7FB",
+        height: 58,
+        marginBottom: 20,
+        fontSize: 16,
+        borderRadius: 10,
+        padding: 12,
+    },
+    backImage: {
+        width: "100%",
+        height: 340,
+        position: "absolute",
+        top: 0,
+        resizeMode: 'cover',
+    },
+    whiteSheet: {
+        width: '100%',
+        height: '75%',
+        position: "absolute",
+        bottom: 0,
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+    },
+    form: {
+        flex: 1,
+        justifyContent: 'center',
+        marginHorizontal: 30,
+    },
+    button: {
+        backgroundColor: colors.primary,
+        height: 58,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 40,
+    },
 });
-
-export default LoginScreen;
