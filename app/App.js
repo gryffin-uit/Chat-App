@@ -7,6 +7,7 @@ import { MenuProvider } from "react-native-popup-menu";
 import { Ionicons } from '@expo/vector-icons';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './config/firebase';
+import { colors } from "./config/constants";
 
 
 import Chats from './screens/Chats';
@@ -73,11 +74,7 @@ const RootNavigator = () => {
     );
   }
 
-  return (
-    <NavigationContainer>
-      {user ? <AuthStack /> : <AuthStack />}
-    </NavigationContainer>
-  );
+  return user ? <AuthStack /> : <AuthStack />;
 };
 
 const App = () => {
