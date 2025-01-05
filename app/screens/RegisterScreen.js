@@ -76,7 +76,6 @@ const RegisterScreen = ({ navigation }) => {
                 value={imageURl.length > 50 ? `${imageURl.slice(0, 50)}...` : imageURl} // Hiển thị tối đa 50 ký tự
                 onChangeText={(text) => setImageUrl(text)}
             />
-
             <Button title="Register" onPress={register} style={styles.button} />
         </View>
     )
