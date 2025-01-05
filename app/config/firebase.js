@@ -1,7 +1,9 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import Constants from 'expo-constants';
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { initializeAuth } from 'firebase/auth';
+//@ts-ignore
+import { getReactNativePersistence } from '@firebase/auth/dist/rn/index.js';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 // Firebase config
