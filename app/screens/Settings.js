@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Text, View, StyleSheet, Linking, TouchableOpacity } from "react-native";
 import ContactRow from "../components/ContactRow";
 import { colors } from "../config/constants";
@@ -54,7 +54,7 @@ const Settings = ({ navigation }) => {
                 showForwardIcon={false}
             />
 
-            <TouchableOpacity style={styles.githubLink} onPress={() => openGithub('https://github.com/Ctere1/react-native-chat')}>
+            <TouchableOpacity style={styles.githubLink} onPress={() => openGithub('https://github.com/gryffin-uit/Chat-App')}>
                 <View >
                     <Text style={{ fontSize: 12, fontWeight: '400' }}>
                         <Ionicons name="logo-github" size={12} style={{ color: colors.teal }} />

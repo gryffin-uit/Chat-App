@@ -1,6 +1,6 @@
 {
   "name": "chat-app",
-  "main": "expo-router/entry",
+  "main": "app/App.js",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
-    "@react-native-async-storage/async-storage": "^1.24.0",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-async-storage/root": "github:react-native-async-storage/async-storage",
     "@react-native-masked-view/masked-view": "0.3.2",
     "@react-navigation/bottom-tabs": "^7.2.0",
@@ -29,6 +29,7 @@
     "expo-env": "^1.1.1",
     "expo-font": "~13.0.2",
     "expo-haptics": "~14.0.0",
+    "expo-image-picker": "^16.0.3",
     "expo-linking": "~7.0.3",
     "expo-router": "~4.0.15",
     "expo-splash-screen": "~0.29.18",
@@ -41,6 +42,7 @@
     "react-dom": "18.3.1",
     "react-native": "0.76.5",
     "react-native-elements": "^3.4.3",
+    "react-native-emoji-modal": "^0.2.4",
     "react-native-emoji-selector": "^0.2.0",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-get-random-values": "~1.11.0",
@@ -49,6 +51,7 @@
     "react-native-reanimated": "~3.16.1",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
+    "react-native-uuid": "^2.0.3",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5"
   },
