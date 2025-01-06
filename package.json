@@ -1,6 +1,6 @@
 {
   "name": "chat-app",
-  "main": "expo-router/entry",
+  "main": "app/App.js",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
-    "@react-native-async-storage/async-storage": "^1.24.0",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-async-storage/root": "github:react-native-async-storage/async-storage",
     "@react-native-masked-view/masked-view": "0.3.2",
     "@react-navigation/bottom-tabs": "^7.2.0",

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { registerRootComponent } from 'expo';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
@@ -14,6 +15,17 @@ import Chats from './screens/Chats';
 import Settings from "./screens/Settings";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
+import Users from "./screens/Users";
+import Profile from "./screens/Profile";
+import About from "./screens/About";
+import Help from "./screens/Help";
+import Account from "./screens/Account";
+import Group from "./screens/Group";
+import Chat from "./screens/Chat";
+import ChatInfo from "./screens/ChatInfo";
+
+import ChatHeader from "./components/ChatHeader";
+import ChatMenu from "./components/ChatMenu";
 
 import { AuthenticatedUserProvider, AuthenticatedUserContext } from "./contexts/AuthenticatedUserContext";
 import { UnreadMessagesProvider, UnreadMessagesContext } from "./contexts/UnreadMessagesContext";
@@ -46,6 +58,31 @@ const TabNavigator = () => {
   );
 };
 
+const MainStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
+    <Stack.Screen
+      name="Chat"
+      component={Chat}
+      options={({ route }) => ({
+        headerTitle: () => <ChatHeader chatName={route.params.chatName} chatId={route.params.id} />,
+        headerRight: () => (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <ChatMenu chatName={route.params.chatName} chatId={route.params.id} />
+          </View>
+        ),
+      })}
+    />
+    <Stack.Screen name="Users" component={Users} options={{ title: 'Select User' }} />
+    <Stack.Screen name="Profile" component={Profile} />
+    <Stack.Screen name="About" component={About} />
+    <Stack.Screen name="Help" component={Help} />
+    <Stack.Screen name="Account" component={Account} />
+    <Stack.Screen name="Group" component={Group} options={{ title: 'New Group' }} />
+    <Stack.Screen name="ChatInfo" component={ChatInfo} options={{ title: 'Chat Information' }} />
+  </Stack.Navigator>
+);
+
 const AuthStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name='Login' component={LoginScreen} />
@@ -74,7 +111,11 @@ const RootNavigator = () => {
     );
   }
 
-  return user ? <AuthStack /> : <AuthStack />;
+  return (
+    <NavigationContainer>
+      {user ? <MainStack /> : <AuthStack />}
+    </NavigationContainer>
+  );
 };
 
 const App = () => {
@@ -89,4 +130,4 @@ const App = () => {
   );
 };
 
-export default App;
+registerRootComponent(App);
