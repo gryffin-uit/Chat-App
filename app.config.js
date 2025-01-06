@@ -5,6 +5,7 @@ export default {
     name: "Chat-App",
     slug: "Chat-App",
     version: "1.0.0",
+    main: "./app/App.js",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "myapp",
