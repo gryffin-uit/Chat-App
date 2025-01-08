@@ -4,18 +4,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { GiftedChat, Bubble, Send, InputToolbar } from 'react-native-gifted-chat';
 import { auth, database } from '../config/firebase';
 import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { colors } from '../config/constants';
 import EmojiModal from 'react-native-emoji-modal';
 import { useNavigation } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
 import uuid from 'react-native-uuid';
 
 function Chat({ route }) {
     const navigation = useNavigation();
     const [messages, setMessages] = useState([]);
     const [modal, setModal] = useState(false);
-    const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onSnapshot(doc(database, 'chats', route.params.id), (doc) => {
@@ -51,65 +48,6 @@ function Chat({ route }) {
         }, { merge: true });
     }, [route.params.id, messages]);
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            await uploadImageAsync(result.assets[0].uri);
-        }
-    };
-
-    const uploadImageAsync = async (uri) => {
-        setUploading(true);
-        const blob = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onload = () => resolve(xhr.response);
-            xhr.onerror = () => reject(new TypeError("Network request failed"));
-            xhr.responseType = "blob";
-            xhr.open("GET", uri, true);
-            xhr.send(null);
-        });
-        const randomString = uuid.v4();
-        const fileRef = ref(getStorage(), randomString);
-
-        const uploadTask = uploadBytesResumable(fileRef, blob);
-
-        uploadTask.on(
-            "state_changed",
-            (snapshot) => {
-                const progress =
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log("Upload percent:", progress);
-            },
-            (error) => {
-                // Handle unsuccessful uploads
-                console.log(error);
-                reject(error);
-            },
-            async () => {
-                const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                setUploading(false);
-                onSend([
-                    {
-                        _id: randomString,
-                        createdAt: new Date(),
-                        text: "",
-                        image: downloadUrl,
-                        user: {
-                            _id: auth?.currentUser?.email,
-                            name: auth?.currentUser?.displayName,
-                            avatar: "https://i.pravatar.cc/300",
-                        },
-                    },
-                ]);
-            }
-        );
-    };
-
     const renderBubble = useMemo(() => (props) => (
         <Bubble
             {...props}
@@ -121,24 +59,14 @@ function Chat({ route }) {
     ), []);
 
     const renderSend = useMemo(() => (props) => (
-        <>
-            <TouchableOpacity style={styles.addImageIcon} onPress={pickImage}>
-                <View>
-                    <Ionicons
-                        name='attach-outline'
-                        size={32}
-                        color={colors.teal} />
-                </View>
-            </TouchableOpacity>
-            <Send {...props}>
-                <View style={{ justifyContent: 'center', height: '100%', marginLeft: 8, marginRight: 4, marginTop: 12 }}>
-                    <Ionicons
-                        name='send'
-                        size={24}
-                        color={colors.teal} />
-                </View>
-            </Send>
-        </>
+        <Send {...props}>
+            <View style={{ justifyContent: 'center', height: '100%', marginLeft: 8, marginRight: 4, marginTop: 12 }}>
+                <Ionicons
+                    name='send'
+                    size={24}
+                    color={colors.teal} />
+            </View>
+        </Send>
     ), []);
 
     const renderInputToolbar = useMemo(() => (props) => (
@@ -168,25 +96,12 @@ function Chat({ route }) {
         }
     }, [modal]);
 
-    const renderLoading = useMemo(() => () => (
-        <View style={styles.loadingContainer}>
-            <ActivityIndicator size='large' color={colors.teal} />
-        </View>
-    ), []);
-
-    const renderLoadingUpload = useMemo(() => () => (
-        <View style={styles.loadingContainerUpload}>
-            <ActivityIndicator size='large' color={colors.teal} />
-        </View>
-    ), []);
-
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? -180 : 0}
         >
-            {uploading && renderLoadingUpload()}
             <GiftedChat
                 messages={messages}
                 showAvatarForEveryMessage={false}
@@ -203,37 +118,38 @@ function Chat({ route }) {
                 renderBubble={renderBubble}
                 renderSend={renderSend}
                 renderUsernameOnMessage={true}
-                renderAvatarOnTop={true}
+                renderAvatarOnTop={false}
                 renderInputToolbar={renderInputToolbar}
                 minInputToolbarHeight={56}
                 scrollToBottom={true}
                 onPressActionButton={handleEmojiPanel}
                 scrollToBottomStyle={styles.scrollToBottomStyle}
-                renderLoading={renderLoading}
             />
-
+    
             {modal &&
-                <EmojiModal
-                    onPressOutside={handleEmojiPanel}
-                    modalStyle={styles.emojiModal}
-                    containerStyle={styles.emojiContainerModal}
-                    backgroundStyle={styles.emojiBackgroundModal}
-                    columns={5}
-                    emojiSize={66}
-                    activeShortcutColor={colors.primary}
-                    onEmojiSelected={(emoji) => {
-                        onSend([{
-                            _id: uuid.v4(),
-                            createdAt: new Date(),
-                            text: emoji,
-                            user: {
-                                _id: auth?.currentUser?.email,
-                                name: auth?.currentUser?.displayName,
-                                avatar: 'https://i.pravatar.cc/300'
-                            }
-                        }]);
-                    }}
-                />
+                <TouchableOpacity style={styles.modalOverlay} onPress={handleEmojiPanel}>
+                    <EmojiModal
+                        onPressOutside={handleEmojiPanel}
+                        modalStyle={styles.emojiModal}
+                        containerStyle={styles.emojiContainerModal}
+                        backgroundStyle={styles.emojiBackgroundModal}
+                        columns={5}
+                        emojiSize={66}
+                        activeShortcutColor={colors.primary}
+                        onEmojiSelected={(emoji) => {
+                            onSend([{
+                                _id: uuid.v4(),
+                                createdAt: new Date(),
+                                text: emoji,
+                                user: {
+                                    _id: auth?.currentUser?.email,
+                                    name: auth?.currentUser?.displayName,
+                                    avatar: 'https://www.gravatar.com/avatar/?d=identicon'
+                                }
+                            }]);
+                        }}
+                    />
+                </TouchableOpacity>
             }
         </KeyboardAvoidingView>
     );
@@ -290,6 +206,16 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)", 
         zIndex: 999, 
+    },
+    modalOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });
 

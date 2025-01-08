@@ -44,10 +44,6 @@ const Users = () => {
         navigation.navigate('Group');
     }, [navigation]);
 
-    const handleNewUser = useCallback(() => {
-        alert('New user'); // Implement this feature
-    }, []);
-
     const handleNavigate = useCallback((user) => {
         let navigationChatID = '';
         let messageYourselfChatID = '';
@@ -116,13 +112,6 @@ const Users = () => {
                 onPress={handleNewGroup}
                 style={{ marginTop: 5 }}
             />
-            <Cell
-                title='New user'
-                icon='person-add'
-                tintColor={colors.teal}
-                onPress={handleNewUser}
-                style={{ marginBottom: 10 }}
-            />
 
             {users.length === 0 ? (
                 <View style={styles.blankContainer}>
@@ -155,7 +144,7 @@ const Users = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
     },
     blankContainer: {
         flex: 1,
@@ -163,6 +152,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     textContainer: {
+        marginVertical: 10,
         marginLeft: 16,
         fontSize: 16,
         fontWeight: "300",

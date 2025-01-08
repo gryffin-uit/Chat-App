@@ -8,7 +8,7 @@ import Cell from "../components/Cell";
 const Profile = () => {
 
     const handleChangeName = () => {
-        Alert.alert('Change Name', 'This feature is coming soon.'); // Implement this feature
+        Alert.alert('Display Name', `Your name is: ${auth?.currentUser?.displayName || "No name set"}`);
     };
 
     const handleDisplayEmail = () => {
@@ -46,7 +46,6 @@ const Profile = () => {
                     icon='person-outline'
                     iconColor="black"
                     subtitle={auth?.currentUser?.displayName || "No name set"}
-                    secondIcon='pencil-outline'
                     onPress={handleChangeName}
                     style={styles.cell}
                 />
@@ -56,18 +55,7 @@ const Profile = () => {
                     subtitle={auth?.currentUser?.email}
                     icon='mail-outline'
                     iconColor="black"
-                    secondIcon='pencil-outline'
                     onPress={handleDisplayEmail}
-                    style={styles.cell}
-                />
-
-                <Cell
-                    title='About'
-                    subtitle='Available'
-                    icon='information-circle-outline'
-                    iconColor="black"
-                    secondIcon='pencil-outline'
-                    onPress={() => Alert.alert('About', 'This feature is coming soon.')}
                     style={styles.cell}
                 />
             </View>

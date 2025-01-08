@@ -44,16 +44,6 @@ const Settings = ({ navigation }) => {
                 }}
             />
 
-            <Cell
-                title='Invite a friend'
-                icon='people-outline'
-                iconColor="black"
-                onPress={() => {
-                    alert('Share touched')
-                }}
-                showForwardIcon={false}
-            />
-
             <TouchableOpacity style={styles.githubLink} onPress={() => openGithub('https://github.com/gryffin-uit/Chat-App')}>
                 <View >
                     <Text style={{ fontSize: 12, fontWeight: '400' }}>

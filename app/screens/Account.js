@@ -20,15 +20,6 @@ const Account = ({ navigation }) => {
     return (
         <View>
             <Cell
-                title='Blocked Users'
-                icon='close-circle-outline'
-                tintColor={colors.primary}
-                onPress={() => {
-                    alert('Blocked users touched')  // Implement this
-                }}
-                style={{ marginTop: 20 }}
-            />
-            <Cell
                 title='Logout'
                 icon='log-out-outline'
                 tintColor={colors.grey}
