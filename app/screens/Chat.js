@@ -100,7 +100,10 @@ function Chat({ route }) {
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? -180 : -165}
+            keyboardVerticalOffset={Platform.select({
+                ios: -180,
+                android: -160, // Giá trị offset cho Android
+            })}
         >
             <GiftedChat
                 messages={messages}
