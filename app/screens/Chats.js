@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, StyleSheet, ScrollView, Pressable, Alert, ActivityIndicator, Text, View, TouchableOpacity } from "react-native";
 import ContactRow from '../components/ContactRow';
-import Separator from "../components/Separator";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { auth, database } from '../config/firebase';
 import { collection, doc, where, query, onSnapshot, orderBy, setDoc, deleteDoc } from 'firebase/firestore';
@@ -226,12 +225,7 @@ const Chats = ({ setUnreadCount }) => {
                             </React.Fragment>
                         ))
                     )}
-                    <Separator />
-                    <View style={styles.blankContainer}>
-                        <Text style={{ fontSize: 12, margin: 15 }}>
-                            <Ionicons name="lock-open" size={12} style={{ color: '#565656' }} /> Your personal messages are not <Text style={{ color: colors.teal }}>end-to-end-encrypted</Text>
-                        </Text>
-                    </View>
+                    
                 </ScrollView>
             )}
             <TouchableOpacity style={styles.fab} onPress={handleFabPress}>

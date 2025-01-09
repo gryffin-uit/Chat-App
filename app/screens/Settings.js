@@ -25,7 +25,7 @@ const Settings = ({ navigation }) => {
 
             <Cell
                 title='Account'
-                subtitle='Privacy, logout, delete account'
+                subtitle='Log out & Delete account'
                 icon='key-outline'
                 onPress={() => {
                     navigation.navigate('Account');
@@ -36,7 +36,7 @@ const Settings = ({ navigation }) => {
 
             <Cell
                 title='Help'
-                subtitle='Contact us, app info'
+                subtitle='Contact us & App info'
                 icon='help-circle-outline'
                 iconColor="black"
                 onPress={() => {
@@ -47,8 +47,8 @@ const Settings = ({ navigation }) => {
             <TouchableOpacity style={styles.githubLink} onPress={() => openGithub('https://github.com/gryffin-uit/Chat-App')}>
                 <View >
                     <Text style={{ fontSize: 12, fontWeight: '400' }}>
-                        <Ionicons name="logo-github" size={12} style={{ color: colors.teal }} />
-                        {' '}App's Github
+                        <Ionicons name="logo-github" size={12} style={{ color: colors.black }} />
+                        {' '}Link to Github
                     </Text>
                 </View>
             </TouchableOpacity>
